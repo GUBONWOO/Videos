@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 
-// 게시물 타입 정의
 interface Post {
   id: number;
   question: string;
@@ -41,9 +40,8 @@ const Posts: React.FC = () => {
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const [newAnswer, setNewAnswer] = useState<string>('');
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [postsPerPage] = useState<number>(1); // 각 질문당 1페이지씩
+  const [postsPerPage] = useState<number>(1);
 
-  // 로컬 스토리지에서 게시물 불러오기
   useEffect(() => {
     const savedPosts = localStorage.getItem('posts');
     if (savedPosts) {
@@ -51,12 +49,10 @@ const Posts: React.FC = () => {
     }
   }, []);
 
-  // 로컬 스토리지에 게시물 저장하기
   useEffect(() => {
     localStorage.setItem('posts', JSON.stringify(posts));
   }, [posts]);
 
-  // 새 질문 추가
   const addQuestion = () => {
     const newPost: Post = {
       id: posts.length + 1,
@@ -67,13 +63,11 @@ const Posts: React.FC = () => {
     setNewQuestion('');
   };
 
-  // 질문 클릭 시 응답 입력 폼 표시
   const handlePostClick = (post: Post) => {
     setSelectedPost(post);
     setNewAnswer(post.answer);
   };
 
-  // 응답 저장
   const saveAnswer = () => {
     if (selectedPost) {
       const updatedPosts = posts.map((post) =>
@@ -85,13 +79,11 @@ const Posts: React.FC = () => {
     }
   };
 
-  // 질문 삭제
   const deletePost = (id: number) => {
     const updatedPosts = posts.filter((post) => post.id !== id);
     setPosts(updatedPosts);
   };
 
-  // 응답 삭제
   const deleteAnswer = (id: number) => {
     const updatedPosts = posts.map((post) =>
       post.id === id ? { ...post, answer: '' } : post
@@ -99,15 +91,12 @@ const Posts: React.FC = () => {
     setPosts(updatedPosts);
   };
 
-  // 현재 페이지에 따라 보여줄 게시물 목록 계산
   const indexOfLastPost = currentPage * postsPerPage;
   const indexOfFirstPost = indexOfLastPost - postsPerPage;
   const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
 
-  // 페이지 번호 목록 계산
-  const pageNumbers = posts.length; // 각 질문당 1페이지이므로 페이지 번호는 질문 수와 동일
+  const pageNumbers = posts.length;
 
-  // 페이지 변경 함수
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
   return (

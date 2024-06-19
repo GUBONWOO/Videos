@@ -34,7 +34,7 @@ const Videos: React.FC = () => {
     useSelector((state: RootState) => state.progress);
   const dispatch = useDispatch();
 
-  const apiKey = process.env.REACT_APP_API_KEY;
+  const apiKey = process.env.NEXT_PUBLIC_API_KEY;
 
   const fetchVideoDetails = async (
     videoId: string,

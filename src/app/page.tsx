@@ -8,7 +8,6 @@ import Count from '@/components/Count';
 
 const Page = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  console.log('Count', Count);
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       setIsLoggedIn(!!user);

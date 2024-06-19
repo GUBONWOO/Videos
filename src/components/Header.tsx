@@ -19,7 +19,6 @@ export default function Header() {
       {isLoggedIn && (
         <header className='bg-gray-900 text-white'>
           <div className='container mx-auto px-4 py-6 flex justify-between items-center'>
-            {/* Logo/Title */}
             <div className='text-3xl font-bold'>
               <Link href='/'>
                 <span className='cursor-pointer hover:text-blue-500'>
@@ -27,8 +26,6 @@ export default function Header() {
                 </span>
               </Link>
             </div>
-
-            {/* Navigation Links */}
             <nav className='space-x-4'>
               <Link href='/'>
                 <span className='cursor-pointer text-lg font-medium text-white hover:text-blue-500'>
