@@ -1,14 +1,17 @@
-import React, { useState } from 'react';
+// Count.tsx
+'use client';
+import React from 'react';
 
-const VideoList = () => {
-  const [progress, setProgress] = useState(0);
+interface CountProps {
+  progress: number;
+}
 
-  const handleVideoClick = () => {
-    // 진행도를 최대 100%까지만 증가시킵니다.
-    setProgress((prevProgress) => Math.min(prevProgress + 10, 100));
-  };
-
-  return <div>진척도상황</div>;
+const Count: React.FC<CountProps> = ({ progress }) => {
+  return (
+    <div>
+      <h3>진행도: {Math.floor(progress)}%</h3>
+    </div>
+  );
 };
 
-export default VideoList;
+export default Count;

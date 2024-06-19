@@ -16,13 +16,18 @@ interface Video {
 }
 
 const Videos: React.FC = () => {
-  const [progress, setProgress] = useState<number>(0);
-  const [videoClicks, setVideoClicks] = useState<number[]>([0, 0, 0, 0, 0, 0]); // 각 동영상 클릭 횟수 저장
+  const [videoClicks, setVideoClicks] = useState<{ [key: string]: boolean }>(
+    {}
+  );
   const [videos, setVideos] = useState<Video[]>([]);
   const [reactVideos, setReactVideos] = useState<Video[]>([]);
   const [vueVideos, setVueVideos] = useState<Video[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('전체'); // 초기값: 전체
-  const apiKey = 'AIzaSyBgyjaRULMTrWKoaoo2RK56eRqlTwWRfPQ'; // 여기에 본인의 YouTube Data API 키를 넣어주세요
+  const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
+  const [progress, setProgress] = useState<number>(0); // 전체 진행도 상태 추가
+  const [reactProgress, setReactProgress] = useState<number>(0); // 리액트 진행도 상태 추가
+  const [vueProgress, setVueProgress] = useState<number>(0); // 뷰 진행도 상태 추가
+  const apiKey = 'AIzaSyBgyjaRULMTrWKoaoo2RK56eRqlTwWRfPQ'; // 환경 변수에서 API 키를 가져옴
 
   // YouTube Data API 호출 함수
   const fetchVideoDetails = async (
@@ -73,6 +78,13 @@ const Videos: React.FC = () => {
         video.snippet.title.toLowerCase().includes('vue')
       );
       setVueVideos(vueVideos);
+
+      // 초기 클릭 상태 설정
+      const initialClicks: { [key: string]: boolean } = {};
+      allVideos.forEach((video) => {
+        initialClicks[video.id] = false;
+      });
+      setVideoClicks(initialClicks);
     };
 
     fetchVideos();
@@ -84,20 +96,39 @@ const Videos: React.FC = () => {
   };
 
   // 동영상 클릭 처리
-  const handleVideoClick = (index: number) => {
-    if (videoClicks[index] === 0) {
-      const newClicks = [...videoClicks];
-      newClicks[index] = 1; // 클릭 횟수를 1로 설정
+  const handleVideoClick = (videoId: string) => {
+    if (!videoClicks[videoId]) {
+      const newClicks = { ...videoClicks, [videoId]: true }; // 클릭 상태 업데이트
       setVideoClicks(newClicks); // 클릭 횟수 배열 업데이트
-      increaseProgress(newClicks); // 진행도 업데이트
+      increaseProgress(newClicks); // 전체 진행도 업데이트
+      increaseCategoryProgress(newClicks); // 카테고리별 진행도 업데이트
     }
+    setSelectedVideo(videoId); // 선택된 동영상 설정
   };
 
-  // 진행도 업데이트
-  const increaseProgress = (newClicks: number[]) => {
-    const totalClicks = newClicks.reduce((acc, curr) => acc + curr, 0);
-    const newProgress = (totalClicks / newClicks.length) * 100; // 총 동영상 개수로 나눠서 진행도 계산
-    setProgress(newProgress); // 진행도 업데이트
+  // 전체 진행도 업데이트
+  const increaseProgress = (newClicks: { [key: string]: boolean }) => {
+    const totalClicks = Object.values(newClicks).filter(
+      (click) => click
+    ).length;
+    const newProgress = (totalClicks / videos.length) * 100; // 총 동영상 개수로 나눠서 진행도 계산
+    setProgress(newProgress); // 전체 진행도 업데이트
+  };
+
+  // 카테고리별 진행도 업데이트
+  const increaseCategoryProgress = (newClicks: { [key: string]: boolean }) => {
+    const totalReactClicks = reactVideos.reduce(
+      (total, video) => (newClicks[video.id] ? total + 1 : total),
+      0
+    );
+    const totalVueClicks = vueVideos.reduce(
+      (total, video) => (newClicks[video.id] ? total + 1 : total),
+      0
+    );
+    const newReactProgress = (totalReactClicks / reactVideos.length) * 100 || 0; // 리액트 진행도 계산
+    const newVueProgress = (totalVueClicks / vueVideos.length) * 100 || 0; // 뷰 진행도 계산
+    setReactProgress(newReactProgress); // 리액트 진행도 업데이트
+    setVueProgress(newVueProgress); // 뷰 진행도 업데이트
   };
 
   // 선택된 카테고리에 따라 보여줄 동영상 리스트 결정
@@ -123,24 +154,80 @@ const Videos: React.FC = () => {
 
       <h2>{selectedCategory} 강의</h2>
       <div className='video-list'>
-        {displayedVideos.map((video, index) => (
+        {displayedVideos.map((video) => (
           <div key={video.id}>
-            <h3>{video.snippet.title}</h3>
-            <iframe
-              width='250'
-              height='200'
-              src={`https://www.youtube.com/embed/${video.id}`}
-              allowFullScreen
-              onClick={() => handleVideoClick(index)}
-              style={{ cursor: 'pointer' }}
-            ></iframe>
+            <h3
+              onClick={() => handleVideoClick(video.id)}
+              style={{ cursor: 'pointer', color: 'blue' }}
+            >
+              {video.snippet.title}
+            </h3>
+            {selectedVideo === video.id && (
+              <iframe
+                width='560'
+                height='315'
+                src={`https://www.youtube.com/embed/${video.id}`}
+                allowFullScreen
+                style={{ display: 'block', marginTop: '10px' }}
+              ></iframe>
+            )}
           </div>
         ))}
       </div>
 
+      {/* 전체 진행도 */}
       <div>
-        <h3>진행도: {Math.floor(progress)}%</h3>
+        <h3>전체 진행도: {progress.toFixed(2)}%</h3>
+        <div style={{ width: '100%', backgroundColor: '#ddd', height: '20px' }}>
+          <div
+            style={{
+              width: `${progress}%`,
+              height: '100%',
+              backgroundColor: 'blue',
+
+              transition: 'width 0.3s ease-in-out',
+            }}
+          ></div>
+        </div>
       </div>
+
+      {/* 리액트 진행도 */}
+      {selectedCategory !== '뷰' && (
+        <div>
+          <h3>리액트 진행도: {reactProgress.toFixed(2)}%</h3>
+          <div
+            style={{ width: '100%', backgroundColor: '#ddd', height: '20px' }}
+          >
+            <div
+              style={{
+                width: `${reactProgress}%`,
+                height: '100%',
+                backgroundColor: 'green',
+                transition: 'width 0.3s ease-in-out',
+              }}
+            ></div>
+          </div>
+        </div>
+      )}
+
+      {/* 뷰 진행도 */}
+      {selectedCategory !== '리액트' && (
+        <div>
+          <h3>뷰 진행도: {vueProgress.toFixed(2)}%</h3>
+          <div
+            style={{ width: '100%', backgroundColor: '#ddd', height: '20px' }}
+          >
+            <div
+              style={{
+                width: `${vueProgress}%`,
+                height: '100%',
+                backgroundColor: 'purple',
+                transition: 'width 0.3s ease-in-out',
+              }}
+            ></div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
