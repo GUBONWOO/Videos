@@ -34,11 +34,11 @@ const Videos: React.FC = () => {
     useSelector((state: RootState) => state.progress);
   const dispatch = useDispatch();
 
-  const apiKey = 'AIzaSyBgyjaRULMTrWKoaoo2RK56eRqlTwWRfPQ';
+  const apiKey = process.env.REACT_APP_API_KEY;
 
   const fetchVideoDetails = async (
     videoId: string,
-    apiKey: string
+    apiKey: string | undefined
   ): Promise<Video | null> => {
     try {
       const response = await fetch(
@@ -142,33 +142,61 @@ const Videos: React.FC = () => {
   }
 
   return (
-    <div>
-      <h2>강의 카테고리</h2>
-      <div>
-        <button onClick={() => handleCategoryClick('전체')}>전체 강의</button>
-        <button onClick={() => handleCategoryClick('리액트')}>
+    <div className='bg-gray-100 text-black p-8'>
+      <h2 className='text-2xl font-bold mb-4'>강의 카테고리</h2>
+      <div className='mb-4 flex justify-center space-x-4'>
+        <button
+          className={`py-2 px-4 rounded-full transition duration-300 ${
+            selectedCategory === '전체'
+              ? 'bg-blue-600 text-white'
+              : 'bg-gray-700 text-gray-300'
+          }`}
+          onClick={() => handleCategoryClick('전체')}
+        >
+          전체 강의
+        </button>
+        <button
+          className={`py-2 px-4 rounded-full transition duration-300 ${
+            selectedCategory === '리액트'
+              ? 'bg-blue-600 text-white'
+              : 'bg-gray-700 text-gray-300'
+          }`}
+          onClick={() => handleCategoryClick('리액트')}
+        >
           리액트 강의
         </button>
-        <button onClick={() => handleCategoryClick('vue')}>뷰 강의</button>
+        <button
+          className={`py-2 px-4 rounded-full transition duration-300 ${
+            selectedCategory === 'vue'
+              ? 'bg-blue-600 text-white'
+              : 'bg-gray-700 text-gray-300'
+          }`}
+          onClick={() => handleCategoryClick('vue')}
+        >
+          뷰 강의
+        </button>
       </div>
 
-      <h2>{selectedCategory} 강의</h2>
-      <div className='video-list'>
+      <h2 className='text-2xl font-bold mb-4'>{selectedCategory} 강의</h2>
+      <div className='grid gap-4'>
         {displayedVideos.map((video) => (
-          <div key={video.id}>
+          <div
+            key={video.id}
+            className='bg-gray-900 rounded-lg overflow-hidden'
+          >
             <h3
               onClick={() => handleVideoClick(video.id)}
-              style={{ cursor: 'pointer', color: 'blue' }}
+              className='cursor-pointer text-blue-500 px-4 py-2 hover:text-blue-300'
             >
               {video.snippet.title}
             </h3>
             {selectedVideo === video.id && (
               <iframe
-                width='560'
+                width='100%'
                 height='315'
                 src={`https://www.youtube.com/embed/${video.id}`}
                 allowFullScreen
-                style={{ display: 'block', marginTop: '10px' }}
+                className='block mt-2'
               ></iframe>
             )}
           </div>

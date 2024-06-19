@@ -1,4 +1,4 @@
-/* @tailwind base;
+@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
@@ -18,16 +18,12 @@
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background: linear-gradient(to bottom, transparent);
+  background-color: #f3f4f6; /* 메인 컴포넌트의 배경색인 bg-gray-100에 해당하는 색상 */
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
-} */
+}

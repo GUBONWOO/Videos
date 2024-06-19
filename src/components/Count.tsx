@@ -1,36 +1,41 @@
 'use client';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
+
 const Count: React.FC = () => {
   const { progress, reactProgress, vueProgress, selectedCategory } =
     useSelector((state: RootState) => state.progress);
 
+  const formatProgress = (value: number): string => {
+    return `${Math.floor(value)}%`;
+  };
+
   return (
-    <>
-      <div>
-        <h3>전체 진행도: {progress.toFixed(2)}%</h3>
-        <div style={{ width: '100%', backgroundColor: '#ddd', height: '20px' }}>
+    <div className='bg-gray-100 p-8'>
+      <div className='progress-container mb-4'>
+        <h3 className='text-lg font-medium text-gray-900'>
+          전체 진행도: {formatProgress(progress)}
+        </h3>
+        <div className='progress-bar h-4 bg-gray-200 rounded-lg'>
           <div
+            className='progress h-4 bg-blue-500 rounded-lg'
             style={{
               width: `${progress}%`,
-              height: '100%',
-              backgroundColor: 'blue',
               transition: 'width 0.3s ease-in-out',
             }}
           ></div>
         </div>
       </div>
       {selectedCategory !== 'vue' && (
-        <div>
-          <h3>리액트 진행도: {reactProgress.toFixed(2)}%</h3>
-          <div
-            style={{ width: '100%', backgroundColor: '#ddd', height: '20px' }}
-          >
+        <div className='progress-container mb-4'>
+          <h3 className='text-lg font-medium text-gray-900'>
+            리액트 진행도: {formatProgress(reactProgress)}
+          </h3>
+          <div className='progress-bar h-4 bg-gray-200 rounded-lg'>
             <div
+              className='progress h-4 bg-green-500 rounded-lg'
               style={{
                 width: `${reactProgress}%`,
-                height: '100%',
-                backgroundColor: 'green',
                 transition: 'width 0.3s ease-in-out',
               }}
             ></div>
@@ -38,23 +43,22 @@ const Count: React.FC = () => {
         </div>
       )}
       {selectedCategory !== '리액트' && (
-        <div>
-          <h3>뷰 진행도: {vueProgress.toFixed(2)}%</h3>
-          <div
-            style={{ width: '100%', backgroundColor: '#ddd', height: '20px' }}
-          >
+        <div className='progress-container mb-4'>
+          <h3 className='text-lg font-medium text-gray-900'>
+            뷰 진행도: {formatProgress(vueProgress)}
+          </h3>
+          <div className='progress-bar h-4 bg-gray-200 rounded-lg'>
             <div
+              className='progress h-4 bg-purple-500 rounded-lg'
               style={{
                 width: `${vueProgress}%`,
-                height: '100%',
-                backgroundColor: 'purple',
                 transition: 'width 0.3s ease-in-out',
               }}
             ></div>
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 };
 

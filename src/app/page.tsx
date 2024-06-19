@@ -8,6 +8,7 @@ import Count from '@/components/Count';
 
 const Page = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  console.log('Count', Count);
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       setIsLoggedIn(!!user);
@@ -21,19 +22,15 @@ const Page = () => {
   };
 
   return (
-    <div className='flex flex-col min-h-screen'>
+    <>
       {!isLoggedIn && <LoginPage onLogin={handleLogin} />}
       {isLoggedIn && (
         <>
-          <div className='flex flex-col flex-1'>
-            <Main />
-          </div>
-          <div className='mt-8'>
-            <Count />
-          </div>
+          <Main />
+          <Count />
         </>
       )}
-    </div>
+    </>
   );
 };
 

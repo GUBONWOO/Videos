@@ -1,9 +1,9 @@
 'use client';
 import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
-import { app } from '../firebaseConfig'; // 이미 설정된 Firebase config
+import { app } from '../firebaseConfig'; // Firebase config setup
 
 interface LoginPageProps {
-  onLogin: () => void; // onLogin prop의 타입 정의
+  onLogin: () => void; // onLogin prop type definition
 }
 
 const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
@@ -13,7 +13,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
 
     try {
       await signInWithPopup(auth, provider);
-      // 로그인 성공 시 onLogin 콜백 호출
+      // Call the onLogin callback on successful login
       onLogin();
     } catch (error) {
       console.error('Error logging in with Google:', error);
@@ -28,7 +28,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
         </h1>
 
         <button
-          className='w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded focus:outline-none'
+          className='w-full bg-blue-500 hover:bg-blue-600 text-white py-3 px-4 rounded focus:outline-none transition duration-300'
           onClick={handleLoginClick}
         >
           Login with Google
