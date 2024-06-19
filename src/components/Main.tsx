@@ -1,6 +1,5 @@
-import React from 'react';
+'use client';
 import { auth } from '../firebaseConfig';
-import '../styles/globals.css';
 
 const Main: React.FC = () => {
   const handleLogout = async () => {

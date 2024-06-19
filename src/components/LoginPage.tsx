@@ -1,6 +1,4 @@
-// components/LoginPage.tsx
-
-import React from 'react';
+'use client';
 import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import { app } from '../firebaseConfig'; // 이미 설정된 Firebase config
 

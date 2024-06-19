@@ -1,20 +1,13 @@
-// src/app/Page.tsx
 'use client';
-import React, { useState, useEffect } from 'react';
-
-const Footer = dynamic(() => import('@/components/Footer'));
-const Header = dynamic(() => import('@/components/Header'));
-const LoginPage = dynamic(() => import('@/components/LoginPage'));
-const Count = dynamic(() => import('@/components/Count'));
-const Main = dynamic(() => import('@/components/Main'));
-const Videos = dynamic(() => import('@/components/Videos'));
+import { useState, useEffect } from 'react';
 
 import { auth } from '../firebaseConfig';
-import dynamic from 'next/dynamic';
+import LoginPage from '@/components/LoginPage';
+import Main from '@/components/Main';
+import Count from '@/components/Count';
 
 const Page = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       setIsLoggedIn(!!user);
@@ -32,15 +25,12 @@ const Page = () => {
       {!isLoggedIn && <LoginPage onLogin={handleLogin} />}
       {isLoggedIn && (
         <>
-          <Header />
           <div className='flex flex-col flex-1'>
             <Main />
           </div>
           <div className='mt-8'>
-            <Count progress={0} />
+            <Count />
           </div>
-          {/* <Videos /> */}
-          <Footer />
         </>
       )}
     </div>
