@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { BsChevronLeft, BsChevronRight } from 'react-icons/bs';
 
 interface Post {
   id: number;
@@ -40,7 +41,7 @@ const Posts: React.FC = () => {
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const [newAnswer, setNewAnswer] = useState<string>('');
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [postsPerPage] = useState<number>(1);
+  const postsPerPage: number = 3; // 한 페이지에 보여줄 질문 수를 1로 설정
 
   useEffect(() => {
     const savedPosts = localStorage.getItem('posts');
@@ -91,109 +92,149 @@ const Posts: React.FC = () => {
     setPosts(updatedPosts);
   };
 
+  // 현재 페이지의 질문들을 가져오기
   const indexOfLastPost = currentPage * postsPerPage;
   const indexOfFirstPost = indexOfLastPost - postsPerPage;
   const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
 
-  const pageNumbers = posts.length;
+  // 페이지네이션 관련 함수들
+  const pageNumbers = Math.ceil(posts.length / postsPerPage);
 
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
+  const nextPage = () => {
+    if (currentPage < pageNumbers) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const prevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
   return (
-    <div className='bg-gray-100 min-h-screen flex flex-col items-center py-10 text-black'>
-      <h2 className='text-2xl font-bold mb-4'>질문과 응답 게시물</h2>
-      <div className='w-full max-w-2xl mb-4'>
-        <input
-          type='text'
-          placeholder='질문을 입력하세요'
-          value={newQuestion}
-          onChange={(e) => setNewQuestion(e.target.value)}
-          className='w-full p-2 border border-gray-300 rounded mb-2 text-black'
-        />
-        <button
-          onClick={addQuestion}
-          className='w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600'
-        >
-          질문 추가
-        </button>
+    <div className='container mt-5'>
+      <h2 className='text-center mb-4 text-4xl text-black'>
+        질문과 응답 게시물
+      </h2>
+
+      <div className='row mb-4'>
+        <div className='col-md-8'>
+          <input
+            type='text'
+            placeholder='질문을 입력하세요'
+            value={newQuestion}
+            onChange={(e) => setNewQuestion(e.target.value)}
+            className='form-control mb-2'
+          />
+        </div>
+        <div className='col-md-4'>
+          <button onClick={addQuestion} className='btn btn-primary w-100'>
+            질문 추가
+          </button>
+        </div>
       </div>
-      <div className='w-full max-w-2xl'>
-        {currentPosts.map((post) => (
-          <div
-            key={post.id}
-            className='bg-white p-4 rounded shadow mb-4 text-black'
-          >
-            <h3 className='text-lg font-semibold'>질문: {post.question}</h3>
-            <p className='mb-2'>응답: {post.answer || '응답이 없습니다'}</p>
-            <button
-              onClick={() => handlePostClick(post)}
-              className='bg-green-500 text-white py-1 px-3 rounded mr-2 hover:bg-green-600'
-            >
-              응답 입력
-            </button>
-            <button
-              onClick={() => deletePost(post.id)}
-              className='bg-red-500 text-white py-1 px-3 rounded mr-2 hover:bg-red-600'
-            >
-              질문 삭제
-            </button>
-            {post.answer && (
-              <button
-                onClick={() => deleteAnswer(post.id)}
-                className='bg-yellow-500 text-white py-1 px-3 rounded hover:bg-yellow-600'
-              >
-                응답 삭제
-              </button>
-            )}
+      {currentPosts.map((post) => (
+        <div key={post.id} className='row mb-4'>
+          <div className='col'>
+            <div className='card'>
+              <div className='card-body'>
+                <h3 className='card-title mb-3'>질문: {post.question}</h3>
+                <p className='card-text mb-2'>
+                  응답: {post.answer || '응답이 없습니다'}
+                </p>
+                <button
+                  onClick={() => handlePostClick(post)}
+                  className='btn btn-success me-2'
+                >
+                  응답 입력
+                </button>
+                <button
+                  onClick={() => deletePost(post.id)}
+                  className='btn btn-danger me-2'
+                >
+                  질문 삭제
+                </button>
+                {post.answer && (
+                  <button
+                    onClick={() => deleteAnswer(post.id)}
+                    className='btn btn-warning'
+                  >
+                    응답 삭제
+                  </button>
+                )}
+              </div>
+            </div>
           </div>
-        ))}
-      </div>
+        </div>
+      ))}
       {selectedPost && (
-        <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50'>
-          <div className='bg-white p-6 rounded shadow-lg w-full max-w-lg text-black'>
-            <h3 className='text-lg font-semibold mb-4'>
-              {selectedPost.question}
-            </h3>
-            <textarea
-              placeholder='응답을 입력하세요'
-              value={newAnswer}
-              onChange={(e) => setNewAnswer(e.target.value)}
-              className='w-full p-2 border border-gray-300 rounded mb-4 text-black'
-              rows={5}
-            />
-            <div className='flex justify-end'>
-              <button
-                onClick={saveAnswer}
-                className='bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 mr-2'
-              >
-                응답 저장
-              </button>
-              <button
-                onClick={() => setSelectedPost(null)}
-                className='bg-gray-500 text-white py-2 px-4 rounded hover:bg-gray-600'
-              >
-                닫기
-              </button>
+        <div className='modal d-block'>
+          <div className='modal-dialog modal-dialog-centered'>
+            <div className='modal-content'>
+              <div className='modal-header'>
+                <h5 className='modal-title'>{selectedPost.question}</h5>
+                <button
+                  type='button'
+                  className='btn-close'
+                  onClick={() => setSelectedPost(null)}
+                ></button>
+              </div>
+              <div className='modal-body'>
+                <textarea
+                  placeholder='응답을 입력하세요'
+                  value={newAnswer}
+                  onChange={(e) => setNewAnswer(e.target.value)}
+                  className='form-control mb-3'
+                  rows={5}
+                />
+                <button onClick={saveAnswer} className='btn btn-primary me-2'>
+                  응답 저장
+                </button>
+                <button
+                  onClick={() => setSelectedPost(null)}
+                  className='btn btn-secondary'
+                >
+                  닫기
+                </button>
+              </div>
             </div>
           </div>
         </div>
       )}
-      <div className='mt-4'>
+      {/* 페이지네이션 컨트롤 고정 위치 */}
+      <div className='pagination-container fixed bottom-24 left-0 right-0 flex justify-center items-center'>
+        <button
+          onClick={prevPage}
+          className={`btn btn-outline-secondary me-2 ${
+            currentPage === 1 && 'disabled'
+          }`}
+        >
+          <BsChevronLeft />
+        </button>
         {Array.from({ length: pageNumbers }, (_, index) => index + 1).map(
           (number) => (
             <button
               key={number}
               onClick={() => paginate(number)}
-              className={`py-1 px-3 mx-1 rounded ${
-                currentPage === number
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-gray-300 text-black hover:bg-gray-400'
-              }`}
+              className={`btn ${
+                currentPage === number ? 'btn-primary' : 'btn-outline-primary'
+              } me-2`}
             >
               {number}
             </button>
           )
         )}
+        <button
+          onClick={nextPage}
+          className={`btn btn-outline-secondary ${
+            currentPage === pageNumbers && 'disabled'
+          }`}
+        >
+          <BsChevronRight />
+        </button>
       </div>
     </div>
   );

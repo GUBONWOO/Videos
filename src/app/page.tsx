@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 
 import { auth } from '../firebaseConfig';
 import LoginPage from '@/components/LoginPage';
-import Main from '@/components/Main';
+// import Main from '@/components/Main';
 import Count from '@/components/Count';
 
 const Page = () => {
@@ -25,7 +25,7 @@ const Page = () => {
       {!isLoggedIn && <LoginPage onLogin={handleLogin} />}
       {isLoggedIn && (
         <>
-          <Main />
+          {/* <Main /> */}
           <Count />
         </>
       )}

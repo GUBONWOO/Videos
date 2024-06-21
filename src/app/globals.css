@@ -1,6 +1,27 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import '~bootstrap/dist/css/bootstrap.min.css';
+
+/* global.css */
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap');
+
+body {
+  font-family: 'Lato', sans-serif;
+  line-height: 1.6;
+  color: #333;
+  background-color: #eceff1; /* 고급스러운 배경색 */
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Lato', sans-serif;
+  font-weight: 700; /* 헤드라인에 좀 더 두꺼운 글씨체 적용 */
+}
 
 :root {
   --foreground-rgb: 0, 0, 0;
@@ -14,12 +35,6 @@
     --background-start-rgb: 0, 0, 0;
     --background-end-rgb: 0, 0, 0;
   }
-}
-
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(to bottom, transparent);
-  background-color: #f3f4f6; /* 메인 컴포넌트의 배경색인 bg-gray-100에 해당하는 색상 */
 }
 
 @layer utilities {

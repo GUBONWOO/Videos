@@ -1,7 +1,23 @@
 'use client';
+import React, { useState } from 'react';
 import { auth } from '../firebaseConfig';
+import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
+import Popover from '@mui/material/Popover';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 
 const Main: React.FC = () => {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+  const handleAvatarClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   const handleLogout = async () => {
     try {
       await auth.signOut();
@@ -11,29 +27,46 @@ const Main: React.FC = () => {
     }
   };
 
+  const open = Boolean(anchorEl);
+  const id = open ? 'simple-popover' : undefined;
+
   return (
-    <div
-      className='flex flex-col items-center justify-start bg-gray-100'
-      style={{ height: '40vh' }}
-    >
-      <div className='max-w-md w-full p-8 mt-8 bg-white shadow-lg rounded-lg'>
-        <div className='flex items-center justify-center mb-6'>
-          <img
-            src={auth.currentUser?.photoURL || ''}
-            alt='User Avatar'
-            className='w-16 h-16 rounded-full mr-4'
-          />
-          <span className='text-xl font-semibold text-gray-900'>
+    <div style={{ top: 10, right: 10 }}>
+      <Avatar
+        src={auth.currentUser?.photoURL || ''}
+        alt='User Avatar'
+        sx={{ width: 40, height: 40, cursor: 'pointer' }}
+        onClick={handleAvatarClick}
+      />
+      <Popover
+        id={id}
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'right',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+      >
+        <Box p={2} display='flex' flexDirection='column' alignItems='center'>
+          <Typography variant='body2' color='textPrimary' fontWeight='bold'>
             {auth.currentUser?.displayName || 'User'}
-          </span>
-        </div>
-        <button
-          className='w-full bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded focus:outline-none'
-          onClick={handleLogout}
-        >
-          Logout
-        </button>
-      </div>
+          </Typography>
+          <Button
+            variant='contained'
+            color='error'
+            size='small'
+            onClick={handleLogout}
+            sx={{ mt: 1 }}
+          >
+            Logout
+          </Button>
+        </Box>
+      </Popover>
     </div>
   );
 };
